@@ -1361,7 +1361,7 @@ local function CreateOption(Tab, ...)
 					local isChecked = not newElement:GetAttribute("Checked")
 					newElement:SetAttribute("Checked", isChecked)
 					newElement.BackgroundColor3 = isChecked and CHECKBOX_ACTIVE_COLOR or CHECKBOX_INACTIVE_COLOR
-					args.callback(isChecked, optionName)
+					args.callback(isChecked)
 				end)
 			end
 
