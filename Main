@@ -94,7 +94,8 @@ local function onInputChanged(input)
 		dragInput = input
 	end
 end
-
+TitleAttributes = {}
+TitleAttributes.draggingspeed = 0.1
 -- Function to update position smoothly
 local function onRenderStep()
 	if dragging and dragInput then
@@ -103,7 +104,7 @@ local function onRenderStep()
 		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 
 		-- Smoothly interpolate the position
-		Title.Position = Title.Position:Lerp(targetPos, 0.1)
+		Title.Position = Title.Position:Lerp(targetPos, TitleAttributes.draggingspeed)
 	end
 end
 
