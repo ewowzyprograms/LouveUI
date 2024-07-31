@@ -55,7 +55,7 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 -- Replace this with your predefined Title
-
+local Title = script.Parent -- Assuming Title is a UI element and script is its child
 
 local dragging = false
 local dragInput, startPos, startMousePos
@@ -91,7 +91,6 @@ local function onInputBegan(input)
 	end
 end
 
-
 -- Function to handle input changed
 local function onInputChanged(input)
 	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
@@ -106,8 +105,8 @@ local function onRenderStep()
 		local delta = mousePos - startMousePos
 		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 
-		-- Smoothly interpolate the position
-		Title.Position = Title.Position:Lerp(targetPos, 0.1)
+		-- Smoothly interpolate the position using TweenService for better smoothness
+		Title.Position = Title.Position:Lerp(targetPos, 0.5) -- Increase the lerp factor to 0.5 for smoother effect
 	end
 end
 
