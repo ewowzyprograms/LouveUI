@@ -100,10 +100,15 @@ local function onRenderStep()
 	if dragging and dragInput then
 		local mousePos = dragInput.Position
 		local delta = mousePos - startMousePos
-		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 
-		-- Smoothly interpolate the position using TweenService for better smoothness
-		Title.Position = Title.Position:Lerp(targetPos, 0.5) -- Increase the lerp factor to 0.5 for smoother effect
+		-- Normalize the delta to ensure consistent speed
+		local speed = 0.5 -- Adjust this value to control the smoothness
+		local normDelta = Vector2.new(delta.X, delta.Y).Unit * delta.Magnitude
+
+		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + normDelta.X, startPos.Y.Scale, startPos.Y.Offset + normDelta.Y)
+
+		-- Smoothly interpolate the position
+		Title.Position = Title.Position:Lerp(targetPos, speed)
 	end
 end
 
