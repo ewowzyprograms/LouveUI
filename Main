@@ -54,6 +54,9 @@ local DecreasingZIndex = 9999
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
+-- Replace this with your predefined Title
+local Title = script.Parent -- Assuming Title is a UI element and script is its child
+
 local dragging = false
 local dragInput, startPos, startMousePos
 
@@ -100,15 +103,10 @@ local function onRenderStep()
 	if dragging and dragInput then
 		local mousePos = dragInput.Position
 		local delta = mousePos - startMousePos
-
-		-- Normalize the delta to ensure consistent speed
-		local speed = 0.5 -- Adjust this value to control the smoothness
-		local normDelta = Vector2.new(delta.X, delta.Y).Unit * delta.Magnitude
-
-		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + normDelta.X, startPos.Y.Scale, startPos.Y.Offset + normDelta.Y)
+		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 
 		-- Smoothly interpolate the position
-		Title.Position = Title.Position:Lerp(targetPos, speed)
+		Title.Position = Title.Position:Lerp(targetPos, 0.1)
 	end
 end
 
