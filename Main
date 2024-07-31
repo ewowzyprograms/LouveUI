@@ -54,9 +54,6 @@ local DecreasingZIndex = 9999
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
--- Replace this with your predefined Title
-local Title = script.Parent -- Assuming Title is a UI element and script is its child
-
 local dragging = false
 local dragInput, startPos, startMousePos
 
