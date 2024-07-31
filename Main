@@ -1786,4 +1786,4 @@ local function releaseMemory()
 	Tab_Creation:Destroy()
 end
 
-return Title
+return
