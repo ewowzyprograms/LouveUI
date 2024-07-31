@@ -1786,4 +1786,4 @@ local function releaseMemory()
 	Tab_Creation:Destroy()
 end
 
-return
+return Title, NewMenu, ActivateSelection, InitializeTabSwitch, CreateOption
