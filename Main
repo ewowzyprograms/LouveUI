@@ -57,55 +57,63 @@ local RunService = game:GetService("RunService")
 local dragging = false
 local dragInput, startPos, startMousePos
 
+-- Configuration
+TitleAttributes = {}
+TitleAttributes.draggingspeed = 0.1  -- Adjust this value to control smoothness
+
 -- Function to handle input began
 local function isMouseInTitle(mousePos)
-	-- Get the Title's position and size in screen coordinates
-	local titlePos = Title.AbsolutePosition
-	local titleSize = Title.AbsoluteSize
+    -- Get the Title's position and size in screen coordinates
+    local titlePos = Title.AbsolutePosition
+    local titleSize = Title.AbsoluteSize
 
-	-- Create boundaries for the Title
-	local left = titlePos.X
-	local top = titlePos.Y
-	local right = titlePos.X + titleSize.X
-	local bottom = titlePos.Y + titleSize.Y
+    -- Create boundaries for the Title
+    local left = titlePos.X
+    local top = titlePos.Y
+    local right = titlePos.X + titleSize.X
+    local bottom = titlePos.Y + titleSize.Y
 
-	-- Check if the mouse position is within the boundaries
-	return mousePos.X >= left and mousePos.X <= right and mousePos.Y >= top and mousePos.Y <= bottom
+    -- Check if the mouse position is within the boundaries
+    return mousePos.X >= left and mousePos.X <= right and mousePos.Y >= top and mousePos.Y <= bottom
 end
 
 local function onInputBegan(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		if isMouseInTitle(input.Position) then
-			dragging = true
-			startMousePos = input.Position
-			startPos = Title.Position
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragging = false
-				end
-			end)
-		end
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if isMouseInTitle(input.Position) then
+            dragging = true
+            startMousePos = input.Position
+            startPos = Title.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end
 end
 
 -- Function to handle input changed
 local function onInputChanged(input)
-	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
-	end
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
 end
-TitleAttributes = {}
-TitleAttributes.draggingspeed = 0.1
+
 -- Function to update position smoothly
 local function onRenderStep()
-	if dragging and dragInput then
-		local mousePos = dragInput.Position
-		local delta = mousePos - startMousePos
-		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-
-		-- Smoothly interpolate the position
-		Title.Position = Title.Position:Lerp(targetPos, TitleAttributes.draggingspeed)
-	end
+    if dragging and dragInput then
+        local mousePos = dragInput.Position
+        local delta = mousePos - startMousePos
+        
+        -- Calculate new position with respect to the start position
+        local targetPos = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+        
+        -- Smoothly interpolate the position
+        Title.Position = Title.Position:Lerp(targetPos, TitleAttributes.draggingspeed)
+    end
 end
 
 -- Connect input events
