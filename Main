@@ -14,8 +14,8 @@ local Checkbox_2 = Instance.new("TextButton")
 local Main_Line = Instance.new("Folder")
 local Option = Instance.new("Frame")
 local UIPadding = Instance.new("UIPadding")
-local TextLabel_Name = Instance.new("Folder")
-local TextLabel_Name_2 = Instance.new("TextLabel")
+local TextLabel = Instance.new("Folder")
+local TextLabel_2 = Instance.new("TextLabel")
 local Keybind = Instance.new("Folder")
 local Keybind_2 = Instance.new("TextButton")
 local Slider = Instance.new("Folder")
@@ -206,22 +206,22 @@ UIPadding.PaddingLeft = UDim.new(0, 3)
 UIPadding.PaddingRight = UDim.new(0, 3)
 UIPadding.PaddingTop = UDim.new(0, 3)
 
-TextLabel_Name.Name = "TextLabel"
-TextLabel_Name.Parent = Options
+TextLabel.Name = "TextLabel"
+TextLabel.Parent = Options
 
-TextLabel_Name_2.Name = "TextLabel"
-TextLabel_Name_2.Parent = TextLabel_Name
-TextLabel_Name_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel_Name_2.BackgroundTransparency = 1.000
-TextLabel_Name_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel_Name_2.BorderSizePixel = 0
-TextLabel_Name_2.Position = UDim2.new(0, 20, 0, 0)
-TextLabel_Name_2.Size = UDim2.new(0, 100, 0, 15)
-TextLabel_Name_2.Font = Enum.Font.Ubuntu
-TextLabel_Name_2.Text = "Full Auto"
-TextLabel_Name_2.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel_Name_2.TextSize = 14.000
-TextLabel_Name_2.TextXAlignment = Enum.TextXAlignment.Left
+TextLabel_2.Name = "TextLabel"
+TextLabel_2.Parent = TextLabel
+TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.BackgroundTransparency = 1.000
+TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel_2.BorderSizePixel = 0
+TextLabel_2.Position = UDim2.new(0, 20, 0, 0)
+TextLabel_2.Size = UDim2.new(0, 100, 0, 15)
+TextLabel_2.Font = Enum.Font.Ubuntu
+TextLabel_2.Text = "Full Auto"
+TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.TextSize = 14.000
+TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
 
 Keybind.Name = "Keybind"
 Keybind.Parent = Options
@@ -1366,9 +1366,9 @@ local function CreateOption(Tab, ...)
 			end
 
 		elseif args.type == "TextLabel" then
-			local textLabelTemplate = UI_Elements.Options.TextLabel_Name:FindFirstChild("TextLabel")
+			local textLabelTemplate = UI_Elements.Options.TextLabel:FindFirstChild("TextLabel")
 			if not textLabelTemplate then
-				error("TextLabel_Name template not found.")
+				error("TextLabel template not found.")
 				return
 			end
 
