@@ -206,10 +206,10 @@ UIPadding.PaddingLeft = UDim.new(0, 3)
 UIPadding.PaddingRight = UDim.new(0, 3)
 UIPadding.PaddingTop = UDim.new(0, 3)
 
-TextLabel_Name.Name = "TextLabel_Name"
+TextLabel_Name.Name = "TextLabel"
 TextLabel_Name.Parent = Options
 
-TextLabel_Name_2.Name = "TextLabel_Name"
+TextLabel_Name_2.Name = "TextLabel"
 TextLabel_Name_2.Parent = TextLabel_Name
 TextLabel_Name_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel_Name_2.BackgroundTransparency = 1.000
@@ -1365,8 +1365,8 @@ local function CreateOption(Tab, ...)
 				end)
 			end
 
-		elseif args.type == "TextLabel_Name" then
-			local textLabelTemplate = UI_Elements.Options.TextLabel_Name:FindFirstChild("TextLabel_Name")
+		elseif args.type == "TextLabel" then
+			local textLabelTemplate = UI_Elements.Options.TextLabel_Name:FindFirstChild("TextLabel")
 			if not textLabelTemplate then
 				error("TextLabel_Name template not found.")
 				return
