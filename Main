@@ -1401,7 +1401,8 @@ local function CreateOption(Tab, ...)
 
 			local sliderHandle = newElement:FindFirstChild("SliderHandle")
 			local sliderValueLabel = newElement:FindFirstChild("SliderValue")
-
+			local CustomFormat = args.CustomFormat or ""
+			
 			local minValue = args.min or 0
 			local maxValue = args.max or 100
 			local initialValue = args.value or minValue
@@ -1409,7 +1410,7 @@ local function CreateOption(Tab, ...)
 
 			local function updateValue(value,call)
 				local clampedValue = math.clamp(value, minValue, maxValue)
-				local formattedValue = string.format("%." .. decimals .. "f", clampedValue)
+				local formattedValue = string.format("%." .. decimals .. "f", clampedValue)..CustomFormat
 				sliderValueLabel.Text = formattedValue
 
 				local sliderWidth = newElement.AbsoluteSize.X
@@ -1461,6 +1462,7 @@ local function CreateOption(Tab, ...)
 				return
 			end
 			local CloseDistance = args.CloseDistance or 100
+			
 
 			newElement = dropdownTemplate:Clone()
 			newElement.Name = optionName
