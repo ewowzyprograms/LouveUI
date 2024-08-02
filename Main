@@ -1410,7 +1410,7 @@ local function CreateOption(Tab, ...)
 
 			local function updateValue(value,call)
 				local clampedValue = math.clamp(value, minValue, maxValue)
-				local formattedValue = string.format("%." .. decimals .. "f", clampedValue)..CustomFormat
+				local formattedValue = (string.format("%." .. decimals .. "f", clampedValue):gsub("(%..-)0+$", "%1"):gsub("%.$", "")) .. CustomFormat
 				sliderValueLabel.Text = formattedValue
 
 				local sliderWidth = newElement.AbsoluteSize.X
