@@ -5,7 +5,7 @@ local ExploitV2 = Instance.new("ScreenGui")
 local UI_Elements = Instance.new("Folder")
 local Options = Instance.new("Folder")
 local Dropdown = Instance.new("Folder")
-local Dropdown_2 = Instance.new("TextLabel")
+local Dropdown_2 = Instance.new("TextButton")
 local Dropdown_Items = Instance.new("Frame")
 local Colorpicker = Instance.new("Folder")
 local Colorpicker_2 = Instance.new("TextButton")
@@ -1455,142 +1455,121 @@ local function CreateOption(Tab, ...)
 			end)
 
 		elseif args.type == "Dropdown" then
-	local dropdownTemplate = UI_Elements.Options.Dropdown:FindFirstChild("Dropdown")
-	if not dropdownTemplate then
-		error("Dropdown template not found.")
-		return
-	end
-	local CloseDistance = args.CloseDistance or 100
+			local dropdownTemplate = UI_Elements.Options.Dropdown:FindFirstChild("Dropdown")
+			if not dropdownTemplate then
+				error("Dropdown template not found.")
+				return
+			end
+			local CloseDistance = args.CloseDistance or 100
 
-	newElement = dropdownTemplate:Clone()
-	newElement.Name = optionName
-	newElement.Position = UDim2.new(0, args.XPosition or 0, 0, 0)
+			newElement = dropdownTemplate:Clone()
+			newElement.Name = optionName
+			newElement.Position = UDim2.new(0, args.XPosition or 0, 0, 0)
 
-	local dropdownButton = newElement
-	local dropdownItemsFrame = newElement:FindFirstChild("Dropdown_Items")
+			local dropdownButton = newElement
+			local dropdownItemsFrame = newElement:FindFirstChild("Dropdown_Items")
 
-	-- Initialize dropdownItemsFrame with zero size and hidden
-	dropdownItemsFrame.Size = UDim2.new(0, 130, 0, 0)
+			-- Initialize dropdownItemsFrame with zero size and hidden
+			dropdownItemsFrame.Size = UDim2.new(0, 130, 0, 0)
 
-	local function clearDropdown()
-		dropdownItemsFrame:ClearAllChildren()
-		dropdownItemsFrame.Size = UDim2.new(0, 130, 0, 0)
-	end
+			local function clearDropdown()
+				dropdownItemsFrame:ClearAllChildren()
+				dropdownItemsFrame.Size = UDim2.new(0, 130, 0, 0)
+			end
 
-	local function createDropdownItems()
-		clearDropdown()
-		local availableItems = args.AvailableItems or {}
-		local currentItems = args.CurrentItems or {}
-		local multipleChoice = args.MultipleChoice or false
+			local function createDropdownItems()
+				clearDropdown()
+				local availableItems = args.AvailableItems or {}
+				local currentItems = args.CurrentItems or {}
+				local multipleChoice = args.MultipleChoice or false
 
-		for i, item in ipairs(availableItems) do
-			local dropdownItem = Memory_Dropdown_Item:Clone()
-			dropdownItem.Parent = dropdownItemsFrame
-			dropdownItem.Name = item
-			dropdownItem.Position = UDim2.new(0, 0, 0, (i - 1) * 20)
-			dropdownItem.Text = item
-			dropdownItem.TextColor3 = table.find(currentItems, item) and ACTIVE_TEXT_COLOR or INACTIVE_TEXT_COLOR
+				for i, item in ipairs(availableItems) do
+					local dropdownItem = Memory_Dropdown_Item:Clone()
+					dropdownItem.Parent = dropdownItemsFrame
+					dropdownItem.Name = item
+					dropdownItem.Position = UDim2.new(0, 0, 0, (i - 1) * 20)
+					dropdownItem.Text = item
+					dropdownItem.TextColor3 = table.find(currentItems, item) and ACTIVE_TEXT_COLOR or INACTIVE_TEXT_COLOR
 
-			dropdownItem.MouseButton1Click:Connect(function()
-				if not multipleChoice then
-					for _, child in ipairs(dropdownItemsFrame:GetChildren()) do
-						child.TextColor3 = INACTIVE_TEXT_COLOR
-					end
-					dropdownItem.TextColor3 = ACTIVE_TEXT_COLOR
-					args.callback({item})
-				else
-					if dropdownItem.TextColor3 == INACTIVE_TEXT_COLOR then
-						dropdownItem.TextColor3 = ACTIVE_TEXT_COLOR
-						table.insert(currentItems, item)
-					else
-						dropdownItem.TextColor3 = INACTIVE_TEXT_COLOR
-						table.remove(currentItems, table.find(currentItems, item))
-					end
-					args.callback(currentItems)
+					dropdownItem.MouseButton1Click:Connect(function()
+						if not multipleChoice then
+							for _, child in ipairs(dropdownItemsFrame:GetChildren()) do
+								child.TextColor3 = INACTIVE_TEXT_COLOR
+							end
+							dropdownItem.TextColor3 = ACTIVE_TEXT_COLOR
+							args.callback({item})
+						else
+							if dropdownItem.TextColor3 == INACTIVE_TEXT_COLOR then
+								dropdownItem.TextColor3 = ACTIVE_TEXT_COLOR
+								table.insert(currentItems, item)
+							else
+								dropdownItem.TextColor3 = INACTIVE_TEXT_COLOR
+								table.remove(currentItems, table.find(currentItems, item))
+							end
+							args.callback(currentItems)
+						end
+					end)
 				end
-			end)
-		end
-	end
+			end
 
-	-- Function to close all other dropdowns
-	local function closeOtherDropdowns()
-		for _, element in ipairs(UI_Elements.Options:GetChildren()) do
-			if element:IsA("Frame") and element.Name ~= optionName then
-				local itemsFrame = element:FindFirstChild("Dropdown_Items")
-				if itemsFrame and itemsFrame.Size.Y.Offset > 0 then
+			-- Define toggleDropdown first
+			local toggleDropdown
+			local dropdownOpen = false
+			local inputChangedConnection
+			-- Define the onMouseMoved function
+			local function onMouseMoved(input)
+				if input.UserInputType == Enum.UserInputType.MouseMovement then
+					local mousePos = input.Position
+					if typeof(mousePos) == "Vector3" then
+						mousePos = Vector2.new(mousePos.X, mousePos.Y)
+					end
+
+					local buttonPos = dropdownButton.AbsolutePosition
+					local buttonSize = dropdownButton.AbsoluteSize
+					local buttonCenter = buttonPos + buttonSize / 2
+					local distance = (mousePos - buttonCenter).magnitude
+
+					if dropdownOpen and distance > CloseDistance then
+						toggleDropdown()  -- Call the function
+					end
+				end
+			end
+
+			
+
+			-- Define toggleDropdown with a proper reference
+			toggleDropdown = function()
+				dropdownOpen = not dropdownOpen
+				if dropdownOpen then
+					createDropdownItems()
+					local tweenInfoOpen = TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+					local tweenGoalOpen = {Size = UDim2.new(0, 130, 0, #args.AvailableItems * 20)}
+					local tweenOpen = TweenService:Create(dropdownItemsFrame, tweenInfoOpen, tweenGoalOpen)
+					tweenOpen:Play()
+
+					-- Connect the mouse move event when dropdown is open
+					inputChangedConnection = UserInputService.InputChanged:Connect(onMouseMoved)
+				else
 					local tweenInfoClose = TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 					local tweenGoalClose = {Size = UDim2.new(0, 130, 0, 0)}
-					local tweenClose = TweenService:Create(itemsFrame, tweenInfoClose, tweenGoalClose)
+					local tweenClose = TweenService:Create(dropdownItemsFrame, tweenInfoClose, tweenGoalClose)
 					tweenClose:Play()
-				end
-			end
-		end
-	end
 
-	-- Define toggleDropdown first
-	local toggleDropdown
-	local dropdownOpen = false
-	local inputChangedConnection
-
-	-- Define the onMouseMoved function
-	local function onMouseMoved(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			local mousePos = input.Position
-			if typeof(mousePos) == "Vector3" then
-				mousePos = Vector2.new(mousePos.X, mousePos.Y)
-			end
-
-			local buttonPos = dropdownButton.AbsolutePosition
-			local buttonSize = dropdownButton.AbsoluteSize
-			local buttonCenter = buttonPos + buttonSize / 2
-			local distance = (mousePos - buttonCenter).magnitude
-
-			if dropdownOpen and distance > CloseDistance then
-				toggleDropdown()  -- Call the function
-			end
-		end
-	end
-
-	-- Define toggleDropdown with a proper reference
-	toggleDropdown = function()
-		dropdownOpen = not dropdownOpen
-		if dropdownOpen then
-			closeOtherDropdowns()  -- Close all other dropdowns when opening this one
-			createDropdownItems()
-			local tweenInfoOpen = TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-			local tweenGoalOpen = {Size = UDim2.new(0, 130, 0, #args.AvailableItems * 20)}
-			local tweenOpen = TweenService:Create(dropdownItemsFrame, tweenInfoOpen, tweenGoalOpen)
-			tweenOpen:Play()
-
-			-- Connect the mouse move event when dropdown is open
-			inputChangedConnection = UserInputService.InputChanged:Connect(onMouseMoved)
-		else
-			local tweenInfoClose = TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-			local tweenGoalClose = {Size = UDim2.new(0, 130, 0, 0)}
-			local tweenClose = TweenService:Create(dropdownItemsFrame, tweenInfoClose, tweenGoalClose)
-			tweenClose:Play()
-
-			-- Disconnect the mouse move event when dropdown is closed
-			tweenClose.Completed:Connect(function()
-				if inputChangedConnection then
-					pcall(function()
-						inputChangedConnection:Disconnect()
+					-- Disconnect the mouse move event when dropdown is closed
+					tweenClose.Completed:Connect(function()
+						if inputChangedConnection then
+							pcall(function()
+								inputChangedConnection:Disconnect()
+							end)
+							inputChangedConnection = nil
+						end
 					end)
-					inputChangedConnection = nil
 				end
+			end
+
+			dropdownButton.MouseButton1Click:Connect(function()
+				toggleDropdown()
 			end)
-		end
-	end
-
-	dropdownButton.MouseEnter:Connect(function()
-		if not dropdownOpen then
-			toggleDropdown()
-		end
-	end)
-end
-
-
-
 			
 
 			-- Button Logic
